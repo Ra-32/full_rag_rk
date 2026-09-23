@@ -1,0 +1,7 @@
+groq
+numpy
+pandas
+sentence-transformers
+python-dotenv
+pageindex
+ipykernel
