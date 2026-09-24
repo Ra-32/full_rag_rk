@@ -1,167 +1,289 @@
+import os
+import warnings
 
 from dotenv import load_dotenv
 from groq import Groq
 from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
-import os
+
+
+# ============================================================
+# 1. LOAD ENVIRONMENT VARIABLES
+# ============================================================
+
 load_dotenv()
-import warnings
+
 warnings.filterwarnings("ignore", message="IProgress not found")
-groq_api_key=os.getenv("GROQ_API_KEY")
-qdrant_url=os.getenv("QDRANT_URL")
-qdrant_api_key=os.getenv("QDRANT_API_KEY")
 
-if not groq_api_key and qdrant_api_key and qdrant_url:
-    print("No api key found in .env")
-else:
-    print("Api loaded sucessfully")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+QDRANT_URL = os.getenv("QDRANT_URL")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 
-client=QdrantClient(
-    url=qdrant_url,
-    api_key=qdrant_api_key
+
+# Check environment variables
+if not GROQ_API_KEY:
+    raise ValueError("GROQ_API_KEY is missing from .env")
+
+if not QDRANT_URL:
+    raise ValueError("QDRANT_URL is missing from .env")
+
+if not QDRANT_API_KEY:
+    raise ValueError("QDRANT_API_KEY is missing from .env")
+
+print("API credentials loaded successfully")
+
+
+# ============================================================
+# 2. CONNECT TO QDRANT CLOUD
+# ============================================================
+
+qdrant_client = QdrantClient(
+    url=QDRANT_URL,
+    api_key=QDRANT_API_KEY
 )
 
-print("Connected to the Qdrant cloud")
+print("Connected to Qdrant Cloud")
 
-COLLECTION_NAME="knowledege"
-EMBEDDING_SIZE=384
 
-#delete collection if is already exists
+# ============================================================
+# 3. CONFIGURATION
+# ============================================================
 
-if client.collection_exists(COLLECTION_NAME):
-    print(f"Deleting existing collection:{COLLECTION_NAME}")
-    client.delete_collection(COLLECTION_NAME)
+COLLECTION_NAME = "knowledge"
+EMBEDDING_SIZE = 384
 
-#CREATE CONNECTION
-client.create_collection(
+KNOWLEDGE_FILE = "knowledege.txt"
+
+
+# ============================================================
+# 4. CREATE / RESET QDRANT COLLECTION
+# ============================================================
+
+if qdrant_client.collection_exists(COLLECTION_NAME):
+    print(f"Deleting existing collection: {COLLECTION_NAME}")
+    qdrant_client.delete_collection(COLLECTION_NAME)
+
+
+qdrant_client.create_collection(
     collection_name=COLLECTION_NAME,
     vectors_config=VectorParams(
         size=EMBEDDING_SIZE,
-        distance=Distance.COSINE,
-    ),
+        distance=Distance.COSINE
+    )
 )
 
-print(f"created collection:{COLLECTION_NAME}")
-print(f"Vector size:{EMBEDDING_SIZE}")
-print(f"Distance.Cosine")
+print(f"Created collection: {COLLECTION_NAME}")
+print(f"Vector size: {EMBEDDING_SIZE}")
+print("Distance: COSINE")
 
-# load our konwledge 
-with open("knowledege.txt","r",encoding="utf-8") as f:
-    documents=[
+
+# ============================================================
+# 5. LOAD KNOWLEDGE BASE
+# ============================================================
+
+with open(KNOWLEDGE_FILE, "r", encoding="utf-8") as file:
+
+    documents = [
         line.strip()
-        for line in f
+        for line in file
         if line.strip()
     ]
 
-print(f"loaded {len(documents)} documents")
+
+print(f"Loaded {len(documents)} documents")
 
 
-# create embedding
+# ============================================================
+# 6. LOAD EMBEDDING MODEL
+# ============================================================
 
-print("loaded embedding model")
-model = SentenceTransformer("all-MiniLM-L6-v2")
+print("Loading embedding model...")
 
-print("embedding model is ready")
+embedding_model = SentenceTransformer(
+    "all-MiniLM-L6-v2"
+)
 
-embeddings=model.encode(documents)
-
-print(f"Genrated {len(embeddings)} embeddings")
-print(f"embedding size:{len(embeddings[0])}")
+print("Embedding model is ready")
 
 
-# create qdrant points
+# ============================================================
+# 7. CREATE EMBEDDINGS
+# ============================================================
 
-points =[]
-for i ,embeddings in enumerate(embeddings):
-    point=PointStruct(
-        id=i+1,
-        vector=embeddings.tolist(),
+embeddings = embedding_model.encode(documents)
+
+print(f"Generated {len(embeddings)} embeddings")
+print(f"Embedding size: {len(embeddings[0])}")
+
+
+# ============================================================
+# 8. CREATE QDRANT POINTS
+# ============================================================
+
+points = []
+
+for index, embedding in enumerate(embeddings):
+
+    point = PointStruct(
+        id=index + 1,
+        vector=embedding.tolist(),
         payload={
-            "text":documents[i]
+            "text": documents[index]
         }
     )
 
     points.append(point)
 
-# upload to qdrant 
-client.upsert(
+
+# ============================================================
+# 9. UPLOAD VECTORS TO QDRANT
+# ============================================================
+
+qdrant_client.upsert(
     collection_name=COLLECTION_NAME,
     points=points
 )
 
-print(f"uploaded {len(points)} documents to qdrant")
+print(f"Uploaded {len(points)} documents to Qdrant")
 
-# serach the qdrant
 
-def search(query,top_k=3):
-    query_vector=model.encode(query).tolist()
+# ============================================================
+# 10. SEARCH FUNCTION
+# ============================================================
 
-    # serach qdrant to similar to these 
+def search(query, top_k=3):
 
-    results=client.query_points(
+    # Convert question into embedding
+    query_vector = embedding_model.encode(query).tolist()
+
+    # Search Qdrant
+    search_results = qdrant_client.query_points(
         collection_name=COLLECTION_NAME,
         query=query_vector,
         limit=top_k,
         with_payload=True
     ).points
 
-    return results
+    return search_results
 
 
-# test search
+# ============================================================
+# 11. CONNECT TO GROQ
+# ============================================================
 
-query="what is python"
+groq_client = Groq(
+    api_key=GROQ_API_KEY
+)
 
-results=search(query,top_k=3)
-
-print("\n Serachresults:")
-
-for result in results:
-    print(f"Score:{result.score:.3f}")
-    print(result.payload["text"])
-    print()
-
-# connect to groq
-
-groq_client=Groq(api_key=groq_api_key) 
+print("Connected to Groq")
 
 
-def ask_llm(question,context):
-    prompt=f""" Answer the question using only the information provided below 
-    content:{context} questions:{question}
+# ============================================================
+# 12. LLM FUNCTION
+# ============================================================
 
-    if the answer is not present in the context says:
-    'i don't know based on the provided information '
-    """
-    
-    response=groq_client.chat.completions.create(
-        model="llama-3.1-8b-instant",
+def ask_llm(question, context):
+
+    prompt = f"""
+You are a helpful question-answering assistant.
+
+Answer the user's question using ONLY the information
+provided in the context.
+
+If the answer is not present in the context, say:
+
+"I don't know based on the provided information."
+
+Do not use outside knowledge.
+
+Context:
+{context}
+
+Question:
+{question}
+
+Answer:
+"""
+
+    response = groq_client.chat.completions.create(
+        model="openai/gpt-oss-120b",
         messages=[
             {
-                "role":"user",
-                "content":prompt           
-             }
-        ]
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        temperature=0
     )
+
     return response.choices[0].message.content
 
-# complete the pipeline
 
-question="what is advatage of python"
+# ============================================================
+# 13. COMPLETE RAG PIPELINE
+# ============================================================
 
-result=search(question,top_k=3)
+question = "What is RAG?"
 
-# extract the text
-context="\n".join(
+print("\n" + "=" * 60)
+print("QUESTION")
+print("=" * 60)
+
+print(question)
+
+
+# Retrieve relevant documents
+results = search(
+    question,
+    top_k=3
+)
+
+
+# ============================================================
+# 14. DISPLAY RETRIEVED DOCUMENTS
+# ============================================================
+
+print("\n" + "=" * 60)
+print("RETRIEVED DOCUMENTS")
+print("=" * 60)
+
+for index, result in enumerate(results, start=1):
+
+    print(f"\nDocument {index}")
+    print(f"Score: {result.score:.4f}")
+    print(f"Text: {result.payload['text']}")
+
+
+# ============================================================
+# 15. CREATE CONTEXT
+# ============================================================
+
+context = "\n".join(
     result.payload["text"]
     for result in results
 )
 
-answer=ask_llm(question,context)
 
-print("\n Final answer")
+print("\n" + "=" * 60)
+print("CONTEXT SENT TO LLM")
+print("=" * 60)
+
+print(context)
+
+
+# ============================================================
+# 16. GENERATE FINAL ANSWER
+# ============================================================
+
+answer = ask_llm(
+    question,
+    context
+)
+
+
+print("\n" + "=" * 60)
+print("FINAL ANSWER")
+print("=" * 60)
 
 print(answer)
-
-    
