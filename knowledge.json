@@ -1,0 +1,207 @@
+[
+  {
+    "text": "Employees receive 24 days of paid leave per year.",
+    "category": "leave",
+    "is_active": true
+  },
+  {
+    "text": "Employees can carry forward up to 10 unused paid leave days to the next year.",
+    "category": "leave",
+    "is_active": true
+  },
+  {
+    "text": "Employees must submit leave requests at least 3 working days before the planned leave.",
+    "category": "leave",
+    "is_active": true
+  },
+  {
+    "text": "Sick leave is available to employees when they are unable to work due to illness.",
+    "category": "leave",
+    "is_active": true
+  },
+  {
+    "text": "Employees may be required to provide a medical certificate for sick leave longer than 3 consecutive working days.",
+    "category": "leave",
+    "is_active": false
+  },
+  {
+    "text": "Employees receive 12 public holidays during the calendar year.",
+    "category": "holidays",
+    "is_active": true
+  },
+  {
+    "text": "The standard working hours are 9:00 AM to 6:00 PM from Monday to Friday.",
+    "category": "working_hours",
+    "is_active": true
+  },
+  {
+    "text": "Employees receive a one-hour lunch break during the standard working day.",
+    "category": "working_hours",
+    "is_active": true
+  },
+  {
+    "text": "Employees may work remotely up to 3 days per week with manager approval.",
+    "category": "remote_work",
+    "is_active": true
+  },
+  {
+    "text": "Remote employees must remain available during core working hours from 10:00 AM to 4:00 PM.",
+    "category": "remote_work",
+    "is_active": false
+  },
+  {
+    "text": "Employees must use company-approved devices and secure networks when working remotely.",
+    "category": "remote_work",
+    "is_active": true
+  },
+  {
+    "text": "Employees receive their monthly salary on the last working day of each month.",
+    "category": "salary",
+    "is_active": true
+  },
+  {
+    "text": "Salary payments are deposited directly into the employee's registered bank account.",
+    "category": "salary",
+    "is_active": true
+  },
+  {
+    "text": "Employees are eligible for an annual performance review after completing 12 months of employment.",
+    "category": "performance",
+    "is_active": true
+  },
+  {
+    "text": "Performance reviews consider job responsibilities, individual goals, teamwork, and overall performance.",
+    "category": "performance",
+    "is_active": true
+  },
+  {
+    "text": "Employees must complete mandatory security and compliance training during their first 30 days.",
+    "category": "training",
+    "is_active": true
+  },
+  {
+    "text": "Employees may access optional professional development courses with manager approval.",
+    "category": "training",
+    "is_active": false
+  },
+  {
+    "text": "Employees must keep their company passwords confidential and must not share them with other people.",
+    "category": "security",
+    "is_active": true
+  },
+  {
+    "text": "Employees must report suspected security incidents to the IT security team immediately.",
+    "category": "security",
+    "is_active": true
+  },
+  {
+    "text": "Company laptops must use approved security software and must not be modified without IT approval.",
+    "category": "security",
+    "is_active": true
+  },
+  {
+    "text": "Employees must not share confidential company information with unauthorized individuals.",
+    "category": "confidentiality",
+    "is_active": true
+  },
+  {
+    "text": "Confidential company documents must be stored only in approved company storage systems.",
+    "category": "confidentiality",
+    "is_active": true
+  },
+  {
+    "text": "Employees must return company equipment when their employment ends.",
+    "category": "company_equipment",
+    "is_active": true
+  },
+  {
+    "text": "Employees are responsible for taking reasonable care of company-issued laptops, phones, and other equipment.",
+    "category": "company_equipment",
+    "is_active": false
+  },
+  {
+    "text": "Employees should report damaged or lost company equipment to their manager and IT department.",
+    "category": "company_equipment",
+    "is_active": true
+  },
+  {
+    "text": "Employees must maintain a professional and respectful workplace environment.",
+    "category": "workplace_conduct",
+    "is_active": true
+  },
+  {
+    "text": "Harassment, discrimination, bullying, and threatening behavior are prohibited in the workplace.",
+    "category": "workplace_conduct",
+    "is_active": true
+  },
+  {
+    "text": "Employees should report workplace conduct concerns to their manager or Human Resources department.",
+    "category": "workplace_conduct",
+    "is_active": true
+  },
+  {
+    "text": "Employees may claim reimbursement for approved business travel expenses.",
+    "category": "expenses",
+    "is_active": true
+  },
+  {
+    "text": "Business travel expenses must be supported by valid receipts when required by the company.",
+    "category": "expenses",
+    "is_active": true
+  },
+  {
+    "text": "Employees should submit business expense claims within 30 days of the expense date.",
+    "category": "expenses",
+    "is_active": true
+  },
+  {
+    "text": "Employees can request a promotion when they meet the requirements of an available role and have demonstrated sustained performance.",
+    "category": "promotion",
+    "is_active": true
+  },
+  {
+    "text": "Promotion decisions may consider performance, skills, experience, responsibilities, and business requirements.",
+    "category": "promotion",
+    "is_active": true
+  },
+  {
+    "text": "New employees are required to complete an initial probation period of 6 months.",
+    "category": "probation",
+    "is_active": true
+  },
+  {
+    "text": "During probation, employees receive regular feedback from their manager.",
+    "category": "probation",
+    "is_active": true
+  },
+  {
+    "text": "Employees who leave the company must complete the required notice period stated in their employment agreement.",
+    "category": "resignation",
+    "is_active": true
+  },
+  {
+    "text": "The standard notice period for eligible employees is 30 days unless the employment agreement specifies otherwise.",
+    "category": "resignation",
+    "is_active": false
+  },
+  {
+    "text": "Employees must complete an exit process and return company property before their final working day.",
+    "category": "resignation",
+    "is_active": true
+  },
+  {
+    "text": "Employees may be eligible for health insurance benefits according to the company's benefits plan.",
+    "category": "health_benefits",
+    "is_active": true
+  },
+  {
+    "text": "Health insurance enrollment must be completed within the eligibility period specified by the benefits team.",
+    "category": "health_benefits",
+    "is_active": true
+  },
+  {
+    "text": "Employees should contact Human Resources for questions about benefits, leave, payroll, or workplace policies.",
+    "category": "human_resources",
+    "is_active": true
+  }
+]
