@@ -1,0 +1,47 @@
+we divide the text according to our use case
+by using the array,linked list 
+
+there are two types of array 
+1.fixed size chunking ---->50 word 1 chunk -> 1 array    # strict chunking 
+ex the man  who did the crime was john ---> now we divide into 2 chunks 
+
+chunk 1---> the man who did crime was 
+chunk 2 -> john 
+
+then there is llm was confused because question was who did the crime ?
+ ----- destroy the meaning 
+
+
+chunking ===Too small -> break at the middle 
+            Too bing --> do not find the meaning 
+
+2.seapratetr based ---> paragraph based ,1 chunk--> 1 para 
+    
+
+    ex 1 para --> 20 line
+        2 para --> 2000 line 
+
+        same problem 
+
+3.recursive chunking===> use more seaprater---->we did the max size,fullstop,
+
+            A,B,C,D,E,F,G,H,,J,K 
+            /               \
+                             \
+            /                  \
+            /                   \
+            a,b,c,d,e f g     h, j,k 
+
+            /
+            a,b,c   def        hjk
+
+chunk overlappingg is allowed 
+
+4.semantic search --====> meaning based chunking 
+
+we launched iphone 18 today ,it has 200 Mp,camera ---> iphone c1
+apples revune went up by 18 %  -->finance c2 
+
+
+
+

@@ -6,3 +6,6 @@ python-dotenv
 pageindex
 ipykernel
 qdrant-client
+langchain
+langchain-core
+langchain-text-splitters
